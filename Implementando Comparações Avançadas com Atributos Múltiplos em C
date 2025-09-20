@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <string.h>
+
+// Estrutura para armazenar os dados de uma carta
+typedef struct {
+    char nome[50];
+    int populacao;
+    int area;
+    float densidade;  // exceção: quanto MENOR, melhor
+    int pib;
+} Carta;
+
+// Função para mostrar atributos
+void mostrarAtributos() {
+    printf("\nEscolha um atributo:\n");
+    printf("1 - População (maior vence)\n");
+    printf("2 - Área (maior vence)\n");
+    printf("3 - Densidade Demográfica (menor vence)\n");
+    printf("4 - PIB (maior vence)\n");
+}
+
+// Função para pegar o valor do atributo escolhido
+float getValor(Carta c, int atributo) {
+    switch (atributo) {
+        case 1: return c.populacao;
+        case 2: return c.area;
+        case 3: return c.densidade;
+        case 4: return c.pib;
+        default: return 0;
+    }
+}
+
+// Função para imprimir o nome do atributo
+char* nomeAtributo(int atributo) {
+    switch (atributo) {
+        case 1: return "População";
+        case 2: return "Área";
+        case 3: return "Densidade Demográfica";
+        case 4: return "PIB";
+        default: return "Desconhecido";
+    }
+}
+
+int main() {
+    Carta c1 = {"Brasil", 214000000, 8516000, 25.1, 2200000};
+    Carta c2 = {"Argentina", 46000000, 2780000, 16.5, 500000};
+
+    int escolha1, escolha2;
+
+    printf("Comparação entre %s e %s\n", c1.nome, c2.nome);
+
+    // Menu dinâmico
+    mostrarAtributos();
+    printf("Escolha o primeiro atributo: ");
+    scanf("%d", &escolha1);
+
+    do {
+        mostrarAtributos();
+        printf("Escolha o segundo atributo (diferente do primeiro): ");
+        scanf("%d", &escolha2);
+        if (escolha2 == escolha1) {
+            printf("Você já escolheu esse atributo! Tente novamente.\n");
+        }
+    } while (escolha2 == escolha1);
+
+    // Comparação
+    float valor1_c1 = getValor(c1, escolha1);
+    float valor1_c2 = getValor(c2, escolha1);
+
+    float valor2_c1 = getValor(c1, escolha2);
+    float valor2_c2 = getValor(c2, escolha2);
+
+    // Regras de comparação
+    int pontos_c1 = 0, pontos_c2 = 0;
+
+    // Atributo 1
+    if (escolha1 == 3) // densidade -> menor vence
+        (valor1_c1 < valor1_c2) ? pontos_c1++ : (valor1_c2 < valor1_c1) ? pontos_c2++ : 0;
+    else
+        (valor1_c1 > valor1_c2) ? pontos_c1++ : (valor1_c2 > valor1_c1) ? pontos_c2++ : 0;
+
+    // Atributo 2
+    if (escolha2 == 3) // densidade -> menor vence
+        (valor2_c1 < valor2_c2) ? pontos_c1++ : (valor2_c2 < valor2_c1) ? pontos_c2++ : 0;
+    else
+        (valor2_c1 > valor2_c2) ? pontos_c1++ : (valor2_c2 > valor2_c1) ? pontos_c2++ : 0;
+
+    // Soma dos valores
+    float soma_c1 = valor1_c1 + valor2_c1;
+    float soma_c2 = valor1_c2 + valor2_c2;
+
+    printf("\n==== RESULTADO DA COMPARAÇÃO ====\n");
+    printf("%s: %s = %.2f | %s = %.2f | SOMA = %.2f\n", 
+           c1.nome, nomeAtributo(escolha1), valor1_c1, nomeAtributo(escolha2), valor2_c1, soma_c1);
+    printf("%s: %s = %.2f | %s = %.2f | SOMA = %.2f\n", 
+           c2.nome, nomeAtributo(escolha1), valor1_c2, nomeAtributo(escolha2), valor2_c2, soma_c2);
+
+    if (soma_c1 > soma_c2)
+        printf("\nVencedor: %s!\n", c1.nome);
+    else if (soma_c2 > soma_c1)
+        printf("\nVencedor: %s!\n", c2.nome);
+    else
+        printf("\nEmpate!\n");
+
+    return 0;
+}
